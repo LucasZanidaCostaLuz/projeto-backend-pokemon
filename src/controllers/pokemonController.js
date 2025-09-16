@@ -1,60 +1,81 @@
-const userModel = require("../models/userModel")
+const pokemonModel = require("../models/pokemonModel")
 
 const getAllPokemons = async (req, res) => {
     try {
-        const users = await userModel.getUser();
-        res.json(users);
+        const pokemon = await pokemonModel.getPokemons();
+        res.json(pokemon);
     } catch (error) {
-        res.status(404).json({ message: "Erro ao buscar usuários." });
+        res.status(500).json({ message: "Erro ao buscar pokemons." });
     }
 };
 
-const getUser = async (req, res) => {
+const getPokemonAndAbilities = async (req, res) => {
     try {
-        const user = await userModel.getUserById(req.params.id);
-        if (!user) {
-            return res.status(404).json({ message: "Usuário não encontrado." });
+        const pokemon = await pokemonModel.getPokemonAndAbilities(req.params.id);
+        if (!pokemon) {
+            return res.status(404).json({ message: "Pokemon não encontrado." });
         }
-        res.json(user);
+        res.json(pokemon);
     } catch (error) {
-        res.status(500).json({ message: "Erro ao buscar usuário." });
+        res.status(500).json({ message: "Erro ao buscar pokemon." });
     }
 };
 
-const createUser = async (req, res) => {
+const getPokemonByName = async (req, res) => {
     try {
-        const { name, email } = req.body;
-        const newUser = await userModel.createUser(name, email);
-        res.status(201).json(newUser);
-    } catch (error) {
-     console.log(error);
-        if (error.code === "23505") { 
-            return res.status(400).json({ message: "E-mail já cadastrado." });
+        const pokemon = await pokemonModel.getPokemonByName(req.params.name);
+        if (!pokemon) {
+            return res.status(404).json({ message: "Pokemon não encontrado." });
         }
-        res.status(500).json({ message: "Erro ao criar usuário." });
-    }
-};
-
-const updateUser = async (req, res) => {
-    try {
-        const { name, email } = req.body;
-        const updatedUser = await userModel.updateUser(req.params.id, name, email);
-        if (!updatedUser) {
-            return res.status(404).json({ message: "Usuário não encontrado." });
-        }
-        res.json(updatedUser);
+        res.json(pokemon);
     } catch (error) {
-        res.status(500).json({ message: "Erro ao atualizar usuário." });
+        res.status(500).json({ message: "Erro ao buscar pokemon." });
     }
 };
 
-const deleteUser = async (req, res) => {
+const getPokemonById = async (req, res) => {
     try {
-        const message = await userModel.deleteUser(req.params.id);
+        const pokemon = await pokemonModel.getPokemonById(req.params.id);
+        if (!pokemon) {
+            return res.status(404).json({ message: "Pokemon não encontrado." });
+        }
+        res.json(pokemon);
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao buscar pokemon." });
+    }
+};
+
+const createPokemon = async (req, res) => {
+    try {
+        const { name, weight, height, evolves_from_species, evolves_to_species } = req.body;
+        const newPokemon = await pokemonModel.createPokemon(name, weight, height, evolves_from_species, evolves_to_species);
+        res.status(201).json(newPokemon);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Erro ao criar pokemon." });
+    }
+};
+
+const updatePokemon = async (req, res) => {
+    try {
+        const { name, weight, height, evolves_from_species, evolves_to_species } = req.body;
+        const updatedPokemon = await pokemonModel.updatePokemon(name, weight, height, evolves_from_species, evolves_to_species, req.params.id);
+        if (!updatedPokemon) {
+            return res.status(404).json({ message: "Pokemon não encontrado." });
+        }
+        res.json(updatedPokemon);
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao atualizar pokemon." });
+    }
+};
+
+const deletePokemon= async (req, res) => {
+    try {
+        const message = await pokemonModel.deletePokemon(req.params.id);
         res.json(message);
     } catch (error) {
-        res.status(500).json({ message: "Erro ao deletar usuário." });
+        res.status(500).json({ message: "Erro ao deletar pokemon." });
     }
 };
 
-module.exports = { getAllUsers, getUser, createUser, updateUser, deleteUser };
+module.exports = {getAllPokemons, getPokemonById, createPokemon, updatePokemon, deletePokemon, getPokemonAndAbilities, getPokemonByName};

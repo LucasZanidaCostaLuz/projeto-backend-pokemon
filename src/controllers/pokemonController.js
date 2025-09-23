@@ -2,7 +2,7 @@ const pokemonModel = require("../models/pokemonModel")
 
 const getAllPokemons = async (req, res) => {
     try {
-        const pokemon = await pokemonModel.getPokemons();
+        const pokemon = await pokemonModel.getAllPokemons();
         res.json(pokemon);
     } catch (error) {
         res.status(500).json({ message: "Erro ao buscar pokemons." });

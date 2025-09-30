@@ -38,12 +38,12 @@ CREATE TABLE pokemon_stats (
 CREATE TABLE teams (
     id SERIAL PRIMARY KEY,
     team_name VARCHAR(100) NOT NULL,
-    user_id INT REFERENCES users(id) ON DELETE SET NULL -- Ligação com o usuário
+    user_id INT REFERENCES users(id) ON DELETE SET NULL 
 );
 
 CREATE TABLE team_pokemons (
     team_id INT REFERENCES teams(id) ON DELETE CASCADE,
-    pokemon_id INT REFERENCES pokemon(id) ON DELETE CASCADE, -- Referência corrigida
+    pokemon_id INT REFERENCES pokemon(id) ON DELETE CASCADE,
     PRIMARY KEY (team_id, pokemon_id)
 );
 

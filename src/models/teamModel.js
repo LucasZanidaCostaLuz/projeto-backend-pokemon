@@ -2,7 +2,7 @@ const pool = require("../config/database");
 
 const getAllTeams = async (team_name ,userId) => {
     if(team_name){
-        const result = await pool.query("SELECT * FROM teams WHERE team_name ILIKE $1 AND user_id = $2", [`%${team_name}%`, userId]);
+        const result = await pool.query("SELECT * FROM teams WHERE team_name = $1 user_id = $2", [team_name, userId ]);
         return result.rows;
     } else{
         const result = await pool.query("SELECT * FROM teams WHERE user_id = $1", [userId]);

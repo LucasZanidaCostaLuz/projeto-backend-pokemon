@@ -1,10 +1,10 @@
 const teamModel = require('../models/teamModel');
+const { updatePokemon } = require('./pokemonController');
 
 const getAllTeams = async (req, res) => {
     try {
-        const { team_name } = req.query;
         const userId = req.user.id;
-        const teams = await teamModel.getAllTeams( team_name, userId);
+        const teams = await teamModel.getAllTeams( userId );
         res.json(teams);
     } catch (error) {
         res.status(500).json({ message: "Erro ao buscar times." });
@@ -26,6 +26,27 @@ const getTeamById = async (req, res) => {
     }
 };
 
+const createTeam = async (req, res) => {
+    try {
+        const { team_name, userId } = req.body
+        const teams = await teamModel.createTeam(team_name, userId)
+        res.json(teams)
+    } catch (error) {
+        res.status(500).json({message: "Erro ao criar time"})
+    }
+}
+
+const updateTeam = async (req, res) => {
+    try {
+        const id = req.params
+        const { team_name } = req.body
+        const teams = await teamModel.updateTeam(team_name, id)
+        res.json(teams)
+    } catch (error) {
+        res.status(500).json({message: "Erro ao atualizar time"})
+    }
+}
+
 const deleteTeam = async (req, res) => {
     try {
         const { id } = req.params;
@@ -41,4 +62,4 @@ const deleteTeam = async (req, res) => {
     }
 };
 
-module.exports = { getAllTeams, getTeamById, deleteTeam };
+module.exports = { getAllTeams, getTeamById, createTeam, updateTeam, deleteTeam };

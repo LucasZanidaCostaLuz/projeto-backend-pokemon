@@ -9,7 +9,7 @@ const getAllPokemons = async () => {
 
 const getPokemonById = async (id) => {
   const result = await pool.query(
-    "SELECT p.id, p.name, p.height, p.weight, p.image, p.evolves_from_species, p.evolves_to_species, (SELECT JSON_AGG(pt.type) FROM pokemon_types pt WHERE pt.pokemon_id = p.id) as types, (SELECT JSON_AGG(pa.ability) FROM pokemon_abilities pa WHERE pa.pokemon_id = p.id) as abilities, JSON_BUILD_OBJECT('hp', ps.hp, 'attack', ps.attack, 'defense', ps.defense, 'speed', ps.speed) as stats FROM pokemon p LEFT JOIN pokemon_stats ps ON p.id = ps.pokemon_id WHERE p.id = $1",
+    "SELECT p.id, p.name, p.height, p.weight, p.image, p.evolves_from_species, p.evolves_to_species, p.description, (SELECT JSON_AGG(pt.type) FROM pokemon_types pt WHERE pt.pokemon_id = p.id) as types, (SELECT JSON_AGG(pa.ability) FROM pokemon_abilities pa WHERE pa.pokemon_id = p.id) as abilities, JSON_BUILD_OBJECT('hp', ps.hp, 'attack', ps.attack, 'defense', ps.defense, 'speed', ps.speed) as stats FROM pokemon p LEFT JOIN pokemon_stats ps ON p.id = ps.pokemon_id WHERE p.id = $1",
     [id]
   );
   return result.rows[0];
@@ -17,7 +17,14 @@ const getPokemonById = async (id) => {
 
 const getPokemonByName = async (name) => {
   const result = await pool.query(
-    "SELECT p.id, p.name, p.height, p.weight, p.image, (SELECT JSON_AGG(pt.type) FROM pokemon_types pt WHERE pt.pokemon_id = p.id) as types FROM pokemon p WHERE name ILIKE $1 ORDER BY p.id ASC",
+    `SELECT p.id, p.name, p.height, p.weight, p.image, p.evolves_from_species, p.evolves_to_species, p.description,
+      (SELECT JSON_AGG(pt.type) FROM pokemon_types pt WHERE pt.pokemon_id = p.id) as types,
+      (SELECT JSON_AGG(pa.ability) FROM pokemon_abilities pa WHERE pa.pokemon_id = p.id) as abilities,
+      JSON_BUILD_OBJECT('hp', ps.hp, 'attack', ps.attack, 'defense', ps.defense, 'speed', ps.speed) as stats
+    FROM pokemon p
+    LEFT JOIN pokemon_stats ps ON p.id = ps.pokemon_id
+    WHERE p.name ILIKE $1
+    ORDER BY p.id ASC`,
     [`%${name}%`]
   );
   return result.rows;

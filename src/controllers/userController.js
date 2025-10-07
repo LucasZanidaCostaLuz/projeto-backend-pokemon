@@ -1,4 +1,5 @@
 const userModel = require("../models/userModel")
+const bcrypt = require("bcryptjs")
 
 const getAllUsers = async (req, res) => {
     try {
@@ -23,22 +24,22 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
-        const { name, email } = req.body;
-        const newUser = await userModel.createUser(name, email);
+        const { name, email, password_hash } = req.body;
+        const hash = await bcrypt.hash(password_hash, 10); 
+        const newUser = await userModel.createUser(name, email, hash); 
         res.status(201).json(newUser);
     } catch (error) {
-	 console.log(error);
+        console.log(error);
         if (error.code === "23505") { 
             return res.status(400).json({ message: "E-mail já cadastrado." });
         }
         res.status(500).json({ message: "Erro ao criar usuário." });
     }
 };
-
 const updateUser = async (req, res) => {
     try {
-        const { name, email } = req.body;
-        const updatedUser = await userModel.updateUser(req.params.id, name, email);
+        const { name, email, password_hash } = req.body;
+        const updatedUser = await userModel.updateUser(req.params.id, name, email, password_hash);
         if (!updatedUser) {
             return res.status(404).json({ message: "Usuário não encontrado." });
         }

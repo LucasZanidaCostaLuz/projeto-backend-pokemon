@@ -26,6 +26,28 @@ const getTeamById = async (req, res) => {
     }
 };
 
+const createTeam = async (req, res) => {
+    try {
+        const { team_name } = req.body
+        const userId = req.user.id
+        const team = await teamModel.createTeam(team_name, userId)
+        res.json(team)
+    } catch (error) {
+        res.status(500).json({ message: "erro ao criar time"})
+    } {
+
+    }
+}
+
+const updateTeam = async (req, res) => {
+    try {
+        const { team_name } = req.body
+        const team = await teamModel.updateTeam(team_name)
+    } catch (error) {
+        
+    }
+}
+
 const deleteTeam = async (req, res) => {
     try {
         const { id } = req.params;
@@ -41,4 +63,4 @@ const deleteTeam = async (req, res) => {
     }
 };
 
-module.exports = { getAllTeams, getTeamById, deleteTeam };
+module.exports = { getAllTeams, getTeamById, createTeam, updateTeam ,deleteTeam };
